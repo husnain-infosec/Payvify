@@ -83,7 +83,7 @@ app.post('/api/orders', verifyApiKey, (req, res) => {
     order_id: order.id,
     amount: order.amount,
     currency: order.currency,
-    payment_url: `http://localhost:${PORT}/pay/${order.id}`,
+    payment_url: `${process.env.BASE_URL || 'http://localhost:' + PORT}/pay/${order.id}`,
     status: order.status
   });
 });
