@@ -1,0 +1,20 @@
+{
+  "name": "payverifypk-web",
+  "version": "1.0.0",
+  "description": "A payment detection service that lets businesses accept JazzCash and Easypaisa payments via a simple API.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "nanoid": "^5.1.11"
+  }
+}

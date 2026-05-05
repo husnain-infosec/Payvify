@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Payment — PayVerifyPK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0d14;
+      --surface: #16161f;
+      --surface2: #1f1f2b;
+      --border: #2e2e3e;
+      --accent: #6c63ff;
+      --accent2: #00d4a1;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --jc: #8b5cf6;
+      --ep: #10b981;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* Gradient orbs */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(108, 99, 255, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 420px;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-header {
+      padding: 28px 28px 20px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(108, 99, 255, 0.08) 0%, transparent 100%);
+    }
+
+    .brand {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      letter-spacing: -0.3px;
+    }
+
+    .merchant-name {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .amount-display {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 40px;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .amount-desc {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .card-body {
+      padding: 24px 28px;
+    }
+
+    .customer-info {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .customer-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+      font-family: 'Syne', sans-serif;
+    }
+
+    .customer-name {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .customer-phone {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .section-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+
+    .methods {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .method-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      text-align: left;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .method-btn:hover {
+      border-color: var(--accent);
+      background: rgba(108, 99, 255, 0.06);
+    }
+
+    .method-btn.selected {
+      border-color: var(--accent);
+      background: rgba(108, 99, 255, 0.1);
+    }
+
+    .method-btn.selected.ep {
+      border-color: var(--ep);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .method-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .jc-icon {
+      background: rgba(139, 92, 246, 0.15);
+    }
+
+    .ep-icon {
+      background: rgba(16, 185, 129, 0.15);
+    }
+
+    .method-info {
+      flex: 1;
+    }
+
+    .method-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .method-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .method-radio {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .method-btn.selected .method-radio {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .method-btn.selected.ep .method-radio {
+      border-color: var(--ep);
+      background: var(--ep);
+    }
+
+    .method-radio::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: white;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .method-btn.selected .method-radio::after {
+      opacity: 1;
+    }
+
+    .pay-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: none;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--accent);
+      color: white;
+      letter-spacing: -0.3px;
+    }
+
+    .pay-btn:hover:not(:disabled) {
+      background: #7c74ff;
+      transform: translateY(-1px);
+    }
+
+    .pay-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .secure-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Success Screen */
+    .success-screen {
+      padding: 48px 28px;
+      text-align: center;
+      display: none;
+    }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      background: rgba(0, 212, 161, 0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 20px;
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .success-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .success-sub {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .txn-id {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      background: var(--surface2);
+      padding: 8px 14px;
+      border-radius: 6px;
+      color: var(--accent2);
+      display: inline-block;
+    }
+
+    /* Loading state */
+    .processing {
+      display: none;
+      padding: 48px 28px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .failed-screen {
+      padding: 48px 28px;
+      text-align: center;
+      display: none;
+    }
+
+    .failed-icon {
+      width: 72px;
+      height: 72px;
+      background: rgba(255, 107, 107, 0.12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+
+    <!-- Main Payment Form -->
+    <div id="payForm">
+      <div class="card-header">
+        <div class="brand">PayVerifyPK</div>
+        <div class="merchant-name" id="merchantName">Loading...</div>
+        <div class="amount-display" id="amountDisplay">—</div>
+        <div class="amount-desc" id="orderDesc">—</div>
+      </div>
+
+      <div class="card-body">
+        <div class="customer-info">
+          <div class="customer-avatar" id="customerAvatar">?</div>
+          <div>
+            <div class="customer-name" id="customerName">Loading...</div>
+            <div class="customer-phone" id="customerPhone">—</div>
+          </div>
+        </div>
+
+        <div class="section-label">Select Payment Method</div>
+        <div class="methods">
+          <button class="method-btn" onclick="selectMethod('jazzcash', this)">
+            <div class="method-icon jc-icon">🟣</div>
+            <div class="method-info">
+              <div class="method-name">JazzCash</div>
+              <div class="method-sub">Pay via JazzCash mobile wallet</div>
+            </div>
+            <div class="method-radio"></div>
+          </button>
+          <button class="method-btn" onclick="selectMethod('easypaisa', this)">
+            <div class="method-icon ep-icon">🟢</div>
+            <div class="method-info">
+              <div class="method-name">Easypaisa</div>
+              <div class="method-sub">Pay via Easypaisa mobile wallet</div>
+            </div>
+            <div class="method-radio"></div>
+          </button>
+        </div>
+
+        <button class="pay-btn" id="payBtn" onclick="processPayment()" disabled>
+          Pay Now
+        </button>
+
+        <div class="secure-note">🔒 Secured by PayVerifyPK — HMAC verified</div>
+      </div>
+    </div>
+
+    <!-- Processing -->
+    <div class="processing" id="processingScreen">
+      <div class="spinner"></div>
+      <div style="font-family:'Syne',sans-serif; font-weight:600; font-size:18px; margin-bottom:8px;">Processing...
+      </div>
+      <div style="color:var(--muted); font-size:14px;">Verifying with <span id="processingMethod">—</span></div>
+    </div>
+
+    <!-- Success -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">✅</div>
+      <div class="success-title">Payment Successful!</div>
+      <div class="success-sub">Your payment has been confirmed.<br>The merchant has been notified.</div>
+      <div class="txn-id" id="txnIdDisplay">—</div>
+    </div>
+
+    <!-- Failed -->
+    <div class="failed-screen" id="failedScreen">
+      <div class="failed-icon">❌</div>
+      <div style="font-family:'Syne',sans-serif; font-weight:600; font-size:18px; margin-bottom:8px;">Payment Failed
+      </div>
+      <div style="color:var(--muted); font-size:14px; margin-bottom:20px;">Something went wrong. Please try again.</div>
+      <button class="pay-btn" onclick="retryPayment()">Try Again</button>
+    </div>
+
+  </div>
+
+  <script>
+    const orderId = window.location.pathname.split('/').pop();
+    let selectedMethod = null;
+    let orderData = null;
+
+    async function loadOrder() {
+      try {
+        const res = await fetch(`/api/pay/${orderId}`);
+        if (!res.ok) throw new Error('Order not found');
+        orderData = await res.json();
+
+        if (orderData.status === 'paid') {
+          showSuccess({ transaction_id: orderData.transaction_id || 'paid' });
+          return;
+        }
+
+        document.getElementById('merchantName').textContent = 'Payment Request';
+        document.getElementById('amountDisplay').textContent = 'Rs ' + orderData.amount.toLocaleString();
+        document.getElementById('orderDesc').textContent = orderData.description || 'Order payment';
+        document.getElementById('customerName').textContent = orderData.customer_name || 'Customer';
+        document.getElementById('customerPhone').textContent = orderData.customer_phone;
+        document.getElementById('customerAvatar').textContent = (orderData.customer_name || 'C')[0].toUpperCase();
+      } catch (e) {
+        document.getElementById('merchantName').textContent = 'Order not found';
+      }
+    }
+
+    function selectMethod(method, btn) {
+      selectedMethod = method;
+      document.querySelectorAll('.method-btn').forEach(b => {
+        b.classList.remove('selected', 'ep');
+      });
+      btn.classList.add('selected');
+      if (method === 'easypaisa') btn.classList.add('ep');
+
+      const payBtn = document.getElementById('payBtn');
+      payBtn.disabled = false;
+      payBtn.textContent = `Pay Rs ${orderData?.amount?.toLocaleString() || ''} via ${method === 'jazzcash' ? 'JazzCash' : 'Easypaisa'}`;
+    }
+
+    async function processPayment() {
+      if (!selectedMethod || !orderData) return;
+
+      // Show processing
+      document.getElementById('payForm').style.display = 'none';
+      document.getElementById('processingScreen').style.display = 'block';
+      document.getElementById('processingMethod').textContent = selectedMethod === 'jazzcash' ? 'JazzCash' : 'Easypaisa';
+
+      // Simulate 2 second processing delay (replace with real gateway redirect in prod)
+      await new Promise(r => setTimeout(r, 2000));
+
+      try {
+        const res = await fetch(`/api/pay/${orderId}/simulate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ method: selectedMethod, success: true })
+        });
+
+        const d = await res.json();
+        if (d.success && d.order_status === 'paid') {
+          showSuccess(d);
+        } else {
+          showFailed();
+        }
+      } catch (e) {
+        showFailed();
+      }
+    }
+
+    function showSuccess(data) {
+      document.getElementById('payForm').style.display = 'none';
+      document.getElementById('processingScreen').style.display = 'none';
+      document.getElementById('failedScreen').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+      document.getElementById('txnIdDisplay').textContent = data.transaction_id || '—';
+    }
+
+    function showFailed() {
+      document.getElementById('processingScreen').style.display = 'none';
+      document.getElementById('failedScreen').style.display = 'block';
+    }
+
+    function retryPayment() {
+      document.getElementById('failedScreen').style.display = 'none';
+      document.getElementById('payForm').style.display = 'block';
+      selectedMethod = null;
+      document.getElementById('payBtn').disabled = true;
+      document.getElementById('payBtn').textContent = 'Pay Now';
+      document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('selected', 'ep'));
+    }
+
+    loadOrder();
+  </script>
+</body>
+
+</html>
