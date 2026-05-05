@@ -9,7 +9,9 @@ const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || 'payvify-secret-key-2025';
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.get('/', (req, res) => {
+  res.redirect('/dashboard.html');
+});
 // Raw body for webhook signature verification
 app.use('/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
